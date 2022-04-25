@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consumer
+  namespace: keda
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: consumer-service
+  template:
+    metadata:
+      labels:
+        app: consumer-service
+    spec:
+      containers:
+      - name: simple-consumer
+        image: pravinmagdum/simple-consumer
+        ports:
+          - containerPort: 8090
+        args: ["java", "-jar", "target/simple-consumer-1.0.0-jar-with-dependencies.jar", "kafka-kafka-bootstrap.kafka:9092", "keda-consumer", "my-topic"]

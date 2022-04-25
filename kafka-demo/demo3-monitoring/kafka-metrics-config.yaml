@@ -1,0 +1,47 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: kafka-metrics
+  labels:
+    app: strimzi
+data:
+  kafka-metrics-config.yaml: |
+    lowercaseOutputName: true
+    rules:
+    - pattern : kafka.server<type=ReplicaManager, name=UnderReplicatedPartitions><>Value
+      type: GAUGE
+      name: kafka_server_replicamanager_underreplicatedpartitions
+    - pattern : kafka.server<type=ReplicaManager, name=PartitionCount><>Value
+      name: kafka_server_replicamanager_partitionCount
+      type: GAUGE
+    - pattern : kafka.server<type=ReplicaManager, name=LeaderCount><>Value
+      name: kafka_server_replicamanager_leadercount
+      type: GAUGE
+    - pattern : kafka.controller<type=KafkaController, name=ActiveControllerCount><>Value
+      type: GAUGE
+      name: kafka_controller_kafkacontroller_activecontrollercount
+    - pattern : kafka.controller<type=KafkaController, name=OfflinePartitionsCount><>Value
+      type: GAUGE
+      name: kafka_controller_kafkacontroller_offlinepartitionscount
+    - pattern: kafka.controller<type=ControllerStats,name=UncleanLeaderElectionsPerSec><>Value
+      type: GAUGE
+      name: kafka_controller_controllerstats_uncleanleaderelections_total
+    #- pattern : kafka.cluster<type=Partition, name=(.+), topic=(.+), partition=(.+)><>Value
+    - pattern : kafka.cluster<type=Partition, name=UnderMinIsr, topic=(.+), partition=(.+)><>Value
+      type: GAUGE
+      name: kafka_cluster_partition_underminisr
+    - pattern: kafka.server<type=BrokerTopicMetrics, name=BytesInPerSec><>Count
+      type: COUNTER
+      name: kafka_server_brokertopicmetrics_bytesin_total
+    - pattern: kafka.server<type=BrokerTopicMetrics, name=BytesOutPerSec><>Count
+      type: COUNTER
+      name: kafka_server_brokertopicmetrics_bytesout_total
+    - pattern: kafka.network<type=SocketServer, name=NetworkProcessorAvgIdlePercent><>Value
+      type: GAUGE
+      name: kafka_network_socketserver_networkprocessoravgidle_percent
+    - pattern: kafka.server<type=KafkaRequestHandlerPool, name=RequestHandlerAvgIdlePercent><>MeanRate
+      name: kafka_server_kafkarequesthandlerpool_requesthandleravgidle_percent
+      type: GAUGE
+    - pattern: kafka.server<type=ReplicaManager, name=UnderMinIsrPartitionCount><>Value
+      type: GAUGE
+      name: kafka_server_replicamanager_underminisrpartitioncount
