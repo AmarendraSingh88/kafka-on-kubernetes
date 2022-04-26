@@ -44,6 +44,12 @@ spec:
       type: persistent-claim
       size: 10Gi
       deleteClaim: false
+    metricsConfig:
+      type: jmxPrometheusExporter
+      valueFrom:
+        configMapKeyRef:
+          name: zookeeper-metrics
+          key: zookeeper-metrics.yaml
   entityOperator:
     topicOperator: {}
     userOperator: {}
