@@ -18,8 +18,9 @@ This repository describes the steps and resources to deploy Kafka on Kubernetes 
     `kubectl apply -f kafka.yaml -n kafka`
 
 5- Wait for the Kafka, Zookeeper and other optional resources to be ready
+
 6- Create a Topic:  
-    `Kubectl apply –f my-topic.yaml -n kafka`
+    `kubectl apply -f kafka-topic.yaml -n kafka`
 
 7- Run Producer  
     `kubectl -n kafka run kafka-producer -ti --image=quay.io/strimzi/kafka:0.28.0-kafka-3.1.0 --rm=true --restart=Never -- bin/kafka-console-producer.sh --bootstrap-server kafka-kafka-bootstrap:9092 --topic my-topic`
@@ -63,31 +64,30 @@ This repository describes the steps and resources to deploy Kafka on Kubernetes 
 
 3- Create configmap for jmx metrics:
 
-    `kubectl apply -f kafka-metrics-config.yaml -n monitoring`
-    `kubectl apply -f zookeeper-metrics.yaml -n monitoring`
+    kubectl apply -f kafka-metrics-config.yaml -n monitoring
+    kubectl apply -f zookeeper-metrics.yaml -n monitoring
 
 4- Update the Kafka resource with jmxPrometheusExporter to scrape the jmx metrics and kafkaExporter for exporting the topic and consumer lag metrics
 
-    `kubectl apply -f kafka.yaml -n kafka`
+    kubectl apply -f kafka.yaml -n kafka
 
 5- Deploy Prometheus - 
 
-    `kubectl apply -f prometheus.yaml -n monitoring`
+    kubectl apply -f prometheus.yaml -n monitoring
 
-6- Deploy pod monitor- 
+6- Deploy pod monitor-
 
-    `kubectl apply -f strimzi-pod-monitor.yaml -n monitoring`
+    kubectl apply -f strimzi-pod-monitor.yaml -n monitoring
 
 7- Deploy Grafana - 
 
-    `kubectl apply -f grafana.yaml -n monitoring`
+    kubectl apply -f grafana.yaml -n monitoring
 
 8- Port forward for Prometheus and Grafana-
 
-`kubectl port-forward svc/grafana 3000:3000`
+    kubectl port-forward svc/grafana 3000:3000 -n monitoring
+    kubectl port-forward svc/prometheus-operated 9090:9090 -n monitoring
 
-`kubectl port-forward svc/prometheus-operated 9090:9090`
-
-9- Add Promtheus datasource in Grafana
+9- Add Prometheus datasource in Grafana
 10 Upload grafana dashboards from- 
     https://github.com/strimzi/strimzi-kafka-operator/tree/0.28.0/examples/metrics/grafana-dashboards
