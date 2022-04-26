@@ -36,8 +36,8 @@ spec:
           name: kafka-metrics
           key: kafka-metrics-config.yaml
   kafkaExporter:
-    topicRegex: "*"
-    groupRegex: "*"
+    topicRegex: ".*"
+    groupRegex: ".*"
   zookeeper:
     replicas: 1
     storage:

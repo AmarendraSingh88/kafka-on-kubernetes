@@ -56,11 +56,11 @@ This repository describes the steps and resources to deploy Kafka on Kubernetes 
 
 1- Create monitoring namespace: 
 
-    `kubectl create namespace monitoring`
+    kubectl create namespace monitoring
 
 2- Deploy Prometheus operator:
 
-    `kubectl apply -f prometheus-operator-deployment.yaml -n monitoring --force-conflicts=true --server-side`
+    kubectl apply -f prometheus-operator-deployment.yaml -n monitoring --force-conflicts=true --server-side
 
 3- Create configmap for jmx metrics:
 
