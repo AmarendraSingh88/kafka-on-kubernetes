@@ -10,11 +10,12 @@ This repository describes the steps and resources to deploy Kafka on Kubernetes 
     `kubectl create namespace kafka`
 
 3- Deploy Strimzi Operator (including ClusterRole, ClusterRoleBinding and CRDs): 
-    `kubectl create -f 'https://strimzi.io/install/latest?namespace=kafka' -n kafka
+    
+`kubectl create -f 'https://strimzi.io/install/latest?namespace=kafka' -n kafka
     `
 
 4- Now we can add a Kafka custom resource to deploy a Kafka Cluster:   
-    `kubectl delete -f kafka.yaml -n kafka`
+    `kubectl apply -f kafka.yaml -n kafka`
 
 5- Wait for the Kafka, Zookeeper and other optional resources to be ready
 6- Create a Topic:  
@@ -48,3 +49,45 @@ This repository describes the steps and resources to deploy Kafka on Kubernetes 
     `kubectl -n kafka run kafka-producer -ti --image=quay.io/strimzi/kafka:0.28.0-kafka-3.1.0 --rm=true --restart=Never -- bin/kafka-console-producer.sh --bootstrap-server kafka-kafka-bootstrap:9092 --topic my-topic`
 
 6- Produce some messages and see if the consumer pods are getting scaled
+
+
+**Demo-3: This demo is to show the Kafka cluster monitoring using Prometheus and Grafana**Use resources from _kafka-demo/demo-3 monitoring_ path)
+
+1- Create monitoring namespace: 
+
+    `kubectl create namespace monitoring`
+
+2- Deploy Prometheus operator:
+
+    `kubectl apply -f prometheus-operator-deployment.yaml -n monitoring --force-conflicts=true --server-side`
+
+3- Create configmap for jmx metrics:
+
+    `kubectl apply -f kafka-metrics-config.yaml -n monitoring`
+    `kubectl apply -f zookeeper-metrics.yaml -n monitoring`
+
+4- Update the Kafka resource with jmxPrometheusExporter to scrape the jmx metrics and kafkaExporter for exporting the topic and consumer lag metrics
+
+    `kubectl apply -f kafka.yaml -n kafka`
+
+5- Deploy Prometheus - 
+
+    `kubectl apply -f prometheus.yaml -n monitoring`
+
+6- Deploy pod monitor- 
+
+    `kubectl apply -f strimzi-pod-monitor.yaml -n monitoring`
+
+7- Deploy Grafana - 
+
+    `kubectl apply -f grafana.yaml -n monitoring`
+
+8- Port forward for Prometheus and Grafana-
+
+`kubectl port-forward svc/grafana 3000:3000`
+
+`kubectl port-forward svc/prometheus-operated 9090:9090`
+
+9- Add Promtheus datasource in Grafana
+10 Upload grafana dashboards from- 
+    https://github.com/strimzi/strimzi-kafka-operator/tree/0.28.0/examples/metrics/grafana-dashboards
